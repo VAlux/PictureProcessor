@@ -1,9 +1,8 @@
 package slicing
 
 import java.awt.Color
-import javafx.geometry.Orientation
-import javafx.geometry.Orientation.HORIZONTAL
-
+import com.sun.java.swing.plaf.gtk.GTKConstants.Orientation
+import com.sun.java.swing.plaf.gtk.GTKConstants.Orientation.HORIZONTAL
 import picture.ImageContainer
 
 import scala.annotation.tailrec
@@ -21,13 +20,22 @@ class PictureScanner(private val image: ImageContainer) {
     }
   }
 
-  def processScannedData(data: Iterable[Int]): Iterable[Int] = {
-    def detectEdge(level: Int): Boolean = {
+  def processScannedData(data: Iterable[Int]): Map[Int, Int] = {
+
+    def detectEdge(level: Int): Int = {
       val dataList = data.toList
-      (dataList(level) != 0 && dataList(level + 1) == 0) || (dataList(level) == 0 && dataList(level + 1) != 0)
+      if(dataList(level) != 0 && dataList(level + 1) == 0) -1
+      else if(dataList(level) == 0 && dataList(level + 1) != 0) 1
+      else 0
     }
 
-    data map (level => if(detectEdge(level)) level)
+    val edges = data map { level =>
+      detectEdge(level) match {
+        case offset if offset != 0 => level -> (level + offset)
+      }
+    }
+
+    edges.toMap
   }
   
   private def intersectionsAmount(from: Int, mainColor: Color, orientation: Orientation): Int = {
