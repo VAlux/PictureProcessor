@@ -29,13 +29,15 @@ class PictureScanner(private val image: ImageContainer) {
       else 0
     }
 
-    val edges = data map { level =>
+    val rowBounds = data map { level =>
       detectEdge(level) match {
-        case offset if offset != 0 => level -> (level + offset)
+        case offset if offset != 0 =>
+          if((level + offset) > 0) level -> (level + offset)
+          else (level + offset) -> level
       }
     }
 
-    edges.toMap
+    rowBounds.toMap
   }
   
   private def intersectionsAmount(from: Int, mainColor: Color, orientation: Orientation): Int = {
@@ -47,7 +49,7 @@ class PictureScanner(private val image: ImageContainer) {
     }
 
     @tailrec
-    def count(scanline: List[Int], equal: Boolean, amount: Int = -1): Int = {
+    def count(scanline: Vector[Int], equal: Boolean, amount: Int = -1): Int = {
       if (scanline.nonEmpty) {
         count(scanline.dropWhile(pixel => equalPredicate(pixel, equal)), !equal, amount + 1)
       } else {

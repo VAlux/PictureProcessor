@@ -15,7 +15,7 @@ class PictureExaminator(private val picture: BufferedImage) {
   /**
    * List of image's color pixels as Integers.
    */
-  val pixels: List[Int] = picture.getRGB(0, 0, width, height, null, 0, width).toList
+  val pixels: Vector[Int] = picture.getRGB(0, 0, width, height, null, 0, width).toVector
 
   /**
    * Image's clustered pixels in a form of Map(Color -> amount of pixels with such color)
