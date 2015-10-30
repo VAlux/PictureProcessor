@@ -11,33 +11,39 @@ import scala.annotation.tailrec
 *  Created by Alvo on 22.10.2015.
 *  Main picture scanning functionality.
 */
+
 class PictureScanner(private val image: ImageContainer) {
   
-  def scan(orientation: Orientation, scanSize: Int): Iterable[Int] = {
+  private def scan(orientation: Orientation, scanSize: Int): Iterable[Int] = {
     for(level: Int <- 0 to scanSize) yield {
       if(intersectionsAmount(level, image.examinator.dominantColor, orientation) > 0) level
       else 0
     }
   }
 
-  def processScannedData(data: Iterable[Int]): Map[Int, Int] = {
+  private def processScannedData(data: Iterable[Int]): Map[Int, Int] = {
 
-    def detectEdge(level: Int): Int = {
-      val dataList = data.toList
-      if(dataList(level) != 0 && dataList(level + 1) == 0) -1
-      else if(dataList(level) == 0 && dataList(level + 1) != 0) 1
-      else 0
+    val dataVector = data.toVector
+
+    @tailrec
+    def getEdge(level: Int): Int = {
+      if(level + 1 > dataVector.size) 0
+      else if(dataVector(level) != 0 && dataVector(level + 1) == 0) -1
+      else if(dataVector(level) == 0 && dataVector(level + 1) != 0) 1
+      else getEdge(level + 2)
     }
 
-    val rowBounds = data map { level =>
-      detectEdge(level) match {
-        case offset if offset != 0 =>
-          if((level + offset) > 0) level -> (level + offset)
-          else (level + offset) -> level
-      }
+    def getInterval(level: Int): (Int, Int) = {
+      val top = getEdge(level)
+      val bottom = getEdge(top + 1)
+      top -> bottom
     }
 
-    rowBounds.toMap
+    ???
+  }
+
+  def getTileRowIntervals(orientation: Orientation, scanSize: Int) = {
+    processScannedData(scan(orientation, scanSize))
   }
   
   private def intersectionsAmount(from: Int, mainColor: Color, orientation: Orientation): Int = {

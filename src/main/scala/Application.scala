@@ -1,5 +1,4 @@
-import javafx.geometry.Orientation.HORIZONTAL
-
+import com.sun.java.swing.plaf.gtk.GTKConstants.Orientation.HORIZONTAL
 import picture.ImageContainer
 import pictureutils.PictureLoader
 import slicing.PictureScanner
@@ -9,8 +8,8 @@ import slicing.PictureScanner
 *  Main app entry point.
 */
 object Application extends App {
-  val image = ImageContainer(PictureLoader("F:/kirby2.png").imageFile)
+  val image = ImageContainer(PictureLoader("/home/alexander/kirby.png").imageFile)
   val scanner = new PictureScanner(image)
-  val horizontalIntersections = scanner.scan(HORIZONTAL, image.height - 1)
+  val horizontalIntersections = scanner.getTileRowIntervals(HORIZONTAL, image.height - 1)
   println(horizontalIntersections)
 }
