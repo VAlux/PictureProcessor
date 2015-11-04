@@ -6,6 +6,7 @@ package utils
  *
  */
 object Logger {
+
   /**
    * Log the message to the console and return the desired result(null by default)
    * @param message The log message.
@@ -16,5 +17,9 @@ object Logger {
   def logMessageAndReturnResult[T](message: String, result: T = null): T = {
     println(message)
     result
+  }
+
+  def logMessage(message: String): Unit = {
+    println(message)
   }
 }

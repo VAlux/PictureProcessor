@@ -3,6 +3,8 @@ package pictureutils
 import java.awt.Color
 import java.awt.image.BufferedImage
 
+import scala.util.Try
+
 /**
 *  Created by Alvo on 22.10.2015.
 *  Access to the needed pre-calculated picture data.

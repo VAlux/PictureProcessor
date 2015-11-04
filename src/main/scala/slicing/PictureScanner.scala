@@ -1,9 +1,9 @@
 package slicing
 
 import java.awt.Color
-import com.sun.java.swing.plaf.gtk.GTKConstants.Orientation
-import com.sun.java.swing.plaf.gtk.GTKConstants.Orientation.HORIZONTAL
 import picture.ImageContainer
+import utils.Orientation
+import utils.Orientation.HORIZONTAL
 
 import scala.annotation.tailrec
 
@@ -28,9 +28,9 @@ class PictureScanner(private val image: ImageContainer) {
     @tailrec
     def getEdge(level: Int): Int = {
       if(level + 1 > dataVector.size) 0
-      else if(dataVector(level) != 0 && dataVector(level + 1) == 0) -1
-      else if(dataVector(level) == 0 && dataVector(level + 1) != 0) 1
-      else getEdge(level + 2)
+      else if(dataVector(level) != 0 && dataVector(level + 1) == 0) level
+      else if(dataVector(level) == 0 && dataVector(level + 1) != 0) level
+      else getEdge(level + 1)
     }
 
     def getInterval(level: Int): (Int, Int) = {
@@ -39,7 +39,21 @@ class PictureScanner(private val image: ImageContainer) {
       top -> bottom
     }
 
-    ???
+    def endReached(interval: (Int, Int)): Boolean = {
+      interval match {
+        case (0, 0) | (_, 0) => true
+        case _ => false
+      }
+    }
+
+    @tailrec
+    def collectIntervals(level: Int = 0, intervals: Map[Int, Int] = Map()): Map[Int, Int] = {
+     val interval = getInterval(level)
+      if (!endReached(interval)) collectIntervals(intervals.last._2, intervals + interval)
+      else intervals
+    }
+
+    collectIntervals()
   }
 
   def getTileRowIntervals(orientation: Orientation, scanSize: Int) = {

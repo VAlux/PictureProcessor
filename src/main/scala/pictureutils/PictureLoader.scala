@@ -28,8 +28,8 @@ case class PictureLoader(private val path: String) {
    */
   def save(fileName: String) = {
     Try(ImageIO.write(imageFile, fileName, new File(path))) match {
-      case Success(image) => Logger.logMessageAndReturnResult[Unit]("Image Successfully Saved")
-      case Failure(exception) => Logger.logMessageAndReturnResult[Unit](exception.getMessage)
+      case Success(image) => Logger.logMessage("Image Successfully Saved")
+      case Failure(exception) => Logger.logMessage(exception.getMessage)
     }
   }
 }
